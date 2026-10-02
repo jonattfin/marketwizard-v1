@@ -1,8 +1,8 @@
 import './App.css';
-import {Button, HStack} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
+import {MyAppNav} from "../../components/shared/nav.tsx";
 
-function App() {
+function Index() {
   const query = useQuery({
     queryKey: [`weatherforecast`],
     queryFn: async () => {
@@ -13,13 +13,11 @@ function App() {
 
   return (
     <>
-      <HStack>
-        <Button>Click me</Button>
-        <Button>Click me</Button>
-      </HStack>
+      Home
+      <MyAppNav/>
       <div> {query.isLoading ? "Loading ... " : JSON.stringify(query.data)}</div>
     </>
   )
 }
 
-export default App;
+export default Index;
