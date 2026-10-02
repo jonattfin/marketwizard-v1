@@ -10,25 +10,46 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@chakra-ui/react": "^3.37.0",
+    "@emotion/react": "^11.14.0",
+    "@tanstack/react-query": "^5.104.1",
+    "@tanstack/react-query-devtools": "^5.104.1",
+    "next-themes": "^0.4.6",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react-dom": "^19.2.1",
+    "react-icons": "^5.7.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "latest",
     "@eslint/js": "^9.39.1",
+    "@storybook/addon-a11y": "^10.6.1",
+    "@storybook/addon-docs": "^10.6.1",
+    "@storybook/addon-mcp": "^10.6.1",
+    "@storybook/addon-vitest": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "@tanstack/eslint-plugin-query": "^5.104.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.0",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.24",
+    "eslint-plugin-storybook": "^10.6.1",
     "globals": "^16.5.0",
+    "playwright": "latest",
+    "storybook": "^10.6.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "8.48.1",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "vitest": "latest"
   },
   "overrides": {
     "postcss": "8.5.23",
