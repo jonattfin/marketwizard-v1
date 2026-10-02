@@ -40,4 +40,4 @@ app.MapDefaultEndpoints();
 
 app.UseFileServer();
 
-app.Run();
+await app.RunAsync();
