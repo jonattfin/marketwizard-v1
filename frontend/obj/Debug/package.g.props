@@ -10,20 +10,42 @@
     <PackageJsonScriptsBuild Condition="$(PackageJsonScriptsBuild) == ''">tsc -b &amp;&amp; vite build</PackageJsonScriptsBuild>
     <PackageJsonScriptsLint Condition="$(PackageJsonScriptsLint) == ''">eslint .</PackageJsonScriptsLint>
     <PackageJsonScriptsPreview Condition="$(PackageJsonScriptsPreview) == ''">vite preview</PackageJsonScriptsPreview>
+    <PackageJsonScriptsStorybook Condition="$(PackageJsonScriptsStorybook) == ''">storybook dev -p 6006</PackageJsonScriptsStorybook>
+    <PackageJsonScriptsBuildStorybook Condition="$(PackageJsonScriptsBuildStorybook) == ''">storybook build</PackageJsonScriptsBuildStorybook>
+    <PackageJsonDependenciesChakraUiReact Condition="$(PackageJsonDependenciesChakraUiReact) == ''">^3.37.0</PackageJsonDependenciesChakraUiReact>
+    <PackageJsonDependenciesEmotionReact Condition="$(PackageJsonDependenciesEmotionReact) == ''">^11.14.0</PackageJsonDependenciesEmotionReact>
+    <PackageJsonDependenciesTanstackReactQuery Condition="$(PackageJsonDependenciesTanstackReactQuery) == ''">^5.104.1</PackageJsonDependenciesTanstackReactQuery>
+    <PackageJsonDependenciesTanstackReactQueryDevtools Condition="$(PackageJsonDependenciesTanstackReactQueryDevtools) == ''">^5.104.1</PackageJsonDependenciesTanstackReactQueryDevtools>
+    <PackageJsonDependenciesNextThemes Condition="$(PackageJsonDependenciesNextThemes) == ''">^0.4.6</PackageJsonDependenciesNextThemes>
     <PackageJsonDependenciesReact Condition="$(PackageJsonDependenciesReact) == ''">^19.2.1</PackageJsonDependenciesReact>
     <PackageJsonDependenciesReactDom Condition="$(PackageJsonDependenciesReactDom) == ''">^19.2.1</PackageJsonDependenciesReactDom>
+    <PackageJsonDependenciesReactIcons Condition="$(PackageJsonDependenciesReactIcons) == ''">^5.7.0</PackageJsonDependenciesReactIcons>
+    <PackageJsonDependenciesReactRouter Condition="$(PackageJsonDependenciesReactRouter) == ''">^8.4.0</PackageJsonDependenciesReactRouter>
+    <PackageJsonDevdependenciesChromaticComStorybook Condition="$(PackageJsonDevdependenciesChromaticComStorybook) == ''">latest</PackageJsonDevdependenciesChromaticComStorybook>
     <PackageJsonDevdependenciesEslintJs Condition="$(PackageJsonDevdependenciesEslintJs) == ''">^9.39.1</PackageJsonDevdependenciesEslintJs>
+    <PackageJsonDevdependenciesStorybookAddonA11y Condition="$(PackageJsonDevdependenciesStorybookAddonA11y) == ''">^10.6.1</PackageJsonDevdependenciesStorybookAddonA11y>
+    <PackageJsonDevdependenciesStorybookAddonDocs Condition="$(PackageJsonDevdependenciesStorybookAddonDocs) == ''">^10.6.1</PackageJsonDevdependenciesStorybookAddonDocs>
+    <PackageJsonDevdependenciesStorybookAddonMcp Condition="$(PackageJsonDevdependenciesStorybookAddonMcp) == ''">^10.6.1</PackageJsonDevdependenciesStorybookAddonMcp>
+    <PackageJsonDevdependenciesStorybookAddonVitest Condition="$(PackageJsonDevdependenciesStorybookAddonVitest) == ''">^10.6.1</PackageJsonDevdependenciesStorybookAddonVitest>
+    <PackageJsonDevdependenciesStorybookReactVite Condition="$(PackageJsonDevdependenciesStorybookReactVite) == ''">^10.6.1</PackageJsonDevdependenciesStorybookReactVite>
+    <PackageJsonDevdependenciesTanstackEslintPluginQuery Condition="$(PackageJsonDevdependenciesTanstackEslintPluginQuery) == ''">^5.104.1</PackageJsonDevdependenciesTanstackEslintPluginQuery>
     <PackageJsonDevdependenciesTypesNode Condition="$(PackageJsonDevdependenciesTypesNode) == ''">^24.10.1</PackageJsonDevdependenciesTypesNode>
     <PackageJsonDevdependenciesTypesReact Condition="$(PackageJsonDevdependenciesTypesReact) == ''">^19.2.7</PackageJsonDevdependenciesTypesReact>
     <PackageJsonDevdependenciesTypesReactDom Condition="$(PackageJsonDevdependenciesTypesReactDom) == ''">^19.2.3</PackageJsonDevdependenciesTypesReactDom>
     <PackageJsonDevdependenciesVitejsPluginReact Condition="$(PackageJsonDevdependenciesVitejsPluginReact) == ''">^6.0.0</PackageJsonDevdependenciesVitejsPluginReact>
+    <PackageJsonDevdependenciesVitestBrowserPlaywright Condition="$(PackageJsonDevdependenciesVitestBrowserPlaywright) == ''">latest</PackageJsonDevdependenciesVitestBrowserPlaywright>
+    <PackageJsonDevdependenciesVitestCoverageV8 Condition="$(PackageJsonDevdependenciesVitestCoverageV8) == ''">latest</PackageJsonDevdependenciesVitestCoverageV8>
     <PackageJsonDevdependenciesEslint Condition="$(PackageJsonDevdependenciesEslint) == ''">^9.39.1</PackageJsonDevdependenciesEslint>
     <PackageJsonDevdependenciesEslintPluginReactHooks Condition="$(PackageJsonDevdependenciesEslintPluginReactHooks) == ''">^5.2.0</PackageJsonDevdependenciesEslintPluginReactHooks>
     <PackageJsonDevdependenciesEslintPluginReactRefresh Condition="$(PackageJsonDevdependenciesEslintPluginReactRefresh) == ''">^0.4.24</PackageJsonDevdependenciesEslintPluginReactRefresh>
+    <PackageJsonDevdependenciesEslintPluginStorybook Condition="$(PackageJsonDevdependenciesEslintPluginStorybook) == ''">^10.6.1</PackageJsonDevdependenciesEslintPluginStorybook>
     <PackageJsonDevdependenciesGlobals Condition="$(PackageJsonDevdependenciesGlobals) == ''">^16.5.0</PackageJsonDevdependenciesGlobals>
+    <PackageJsonDevdependenciesPlaywright Condition="$(PackageJsonDevdependenciesPlaywright) == ''">latest</PackageJsonDevdependenciesPlaywright>
+    <PackageJsonDevdependenciesStorybook Condition="$(PackageJsonDevdependenciesStorybook) == ''">^10.6.1</PackageJsonDevdependenciesStorybook>
     <PackageJsonDevdependenciesTypescript Condition="$(PackageJsonDevdependenciesTypescript) == ''">~5.9.3</PackageJsonDevdependenciesTypescript>
     <PackageJsonDevdependenciesTypescriptEslint Condition="$(PackageJsonDevdependenciesTypescriptEslint) == ''">8.48.1</PackageJsonDevdependenciesTypescriptEslint>
     <PackageJsonDevdependenciesVite Condition="$(PackageJsonDevdependenciesVite) == ''">^8.0.16</PackageJsonDevdependenciesVite>
+    <PackageJsonDevdependenciesVitest Condition="$(PackageJsonDevdependenciesVitest) == ''">latest</PackageJsonDevdependenciesVitest>
     <PackageJsonOverridesPostcss Condition="$(PackageJsonOverridesPostcss) == ''">8.5.23</PackageJsonOverridesPostcss>
     <PackageJsonOverridesJsYaml Condition="$(PackageJsonOverridesJsYaml) == ''">4.3.0</PackageJsonOverridesJsYaml>
     <PackageJsonOverridesEsbuild Condition="$(PackageJsonOverridesEsbuild) == ''">0.28.1</PackageJsonOverridesEsbuild>
