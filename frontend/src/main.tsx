@@ -32,10 +32,12 @@ function Layout() {
               <Center>
                 <Flex width={"80%"} direction={"column"}>
                   <QueryClientProvider client={queryClient}>
+                    <div>&nbsp;</div>
                     <Header
                       theme={theme}
                       setTheme={(theme) => setTheme(theme)}
                     />
+                    <div>&nbsp;</div>
                     <Separator/>
                     <HomePage/>
                     <ReactQueryDevtools initialIsOpen={false}/>

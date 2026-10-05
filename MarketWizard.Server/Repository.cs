@@ -4,31 +4,31 @@ namespace MarketWizard.Server;
 
 public class Repository
 {
-    public WeatherForecast[] GetWeatherForecast()
-    {
-        string[] summaries =
-            ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
-
-
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    }
+    private static readonly string[] CountryCodes =
+    [
+        "AUS",
+        "CHN",
+        "DEU",
+        "ESP",
+        "FRA",
+        "GBR",
+        "IND",
+        "JPN",
+        "KOR",
+        "USA"
+    ];
 
     public IndicePerformanceData GetIndices()
     {
-        var indices = new Faker<IndicePerformance>()
-            .RuleFor(o => o.Name, f => f.Finance.Account())
-            .RuleFor(o => o.RegularMarketChangePercent, f => f.Random.Double(-100, 100))
-            .RuleFor(o => o.RegularMarketPrice, f => f.Random.Double(-100, 100));
-        
-        return new IndicePerformanceData(indices.Generate(5), new DateTimeOffset(DateTime.Now));
+        var indices = CountryCodes.Select(code => new IndicePerformance
+        {
+            Name = code,
+            CountryCode = code,
+            RegularMarketChangePercent = Random.Shared.NextDouble() * Random.Shared.Next(-1, 2),
+            RegularMarketPrice = Random.Shared.Next(5_000, 100_000)
+        }).ToList();
+
+        return new IndicePerformanceData(indices, new DateTimeOffset(DateTime.Now));
     }
 
     public TopNewsData GetTopNews()
@@ -40,52 +40,54 @@ public class Repository
             .RuleFor(o => o.Source, f => f.Internet.Url())
             .RuleFor(o => o.Source, f => f.Company.CompanyName());
 
-        return new TopNewsData(news.Generate(5), new DateTimeOffset(DateTime.Now));
+        return new TopNewsData(news.Generate(10), new DateTimeOffset(DateTime.Now));
     }
 
     public SectorPerformanceData GetSectorPerformance()
     {
-        var sectorPerformance = new Faker<SectorPerformance>();
-        return new SectorPerformanceData(sectorPerformance.Generate(5), new DateTimeOffset(DateTime.Now));
+        var sectorPerformance = Enum.GetValues<SectorType>().Select(type => new SectorPerformance()
+        {
+            Type = type.ToString(),
+            Change = new Faker().Random.Double(-0.5, 0.5)
+        }).ToList();
+
+        return new SectorPerformanceData(sectorPerformance, new DateTimeOffset(DateTime.Now));
     }
 
     public GainersData GetTopGainers()
     {
-        var gainers = new Faker<Gainers>()
-            .RuleFor(o => o.Country, f => f.Company.CompanyName())
-            .RuleFor(o => o.Change, f => f.Random.Double(-100, 100))
-            .RuleFor(o => o.Type, f => SectorType.ConsumerGoods);
-        
-        return new GainersData(gainers.Generate(5), new DateTimeOffset(DateTime.Now));
+        var topGainers = GetGainers(6);
+        return new GainersData(topGainers, new DateTimeOffset(DateTime.Now));
     }
 
     public GainersData GetTopLosers()
     {
-        var gainers = new Faker<Gainers>()
-            .RuleFor(o => o.Country, f => f.Company.CompanyName())
-            .RuleFor(o => o.Change, f => f.Random.Double(-100, 100))
-            .RuleFor(o => o.Type, f => SectorType.ConsumerGoods);
-        
-        return new GainersData(gainers.Generate(5), new DateTimeOffset(DateTime.Now));
+        var topLosers = GetGainers(6);
+        return new GainersData(topLosers, new DateTimeOffset(DateTime.Now));
     }
 
     public GainersData GetTopIndustries()
     {
-        var gainers = new Faker<Gainers>()
-            .RuleFor(o => o.Country, f => f.Company.CompanyName())
-            .RuleFor(o => o.Change, f => f.Random.Double(-100, 100))
-            .RuleFor(o => o.Type, f => SectorType.ConsumerGoods);
-
-        return new GainersData(gainers.Generate(5), new DateTimeOffset(DateTime.Now));
+        var topIndustries = GetGainers(6);
+        return new GainersData(topIndustries, new DateTimeOffset(DateTime.Now));
     }
 
     public GainersData GetWorstIndustries()
     {
-        var gainers = new Faker<Gainers>()
-            .RuleFor(o => o.Country, f => f.Company.CompanyName())
-            .RuleFor(o => o.Change, f => f.Random.Double(-100, 100))
-            .RuleFor(o => o.Type, f => SectorType.ConsumerGoods);
+        var worstIndustries = GetGainers(6);
+        return new GainersData(worstIndustries, new DateTimeOffset(DateTime.Now));
+    }
+    
+    private List<Gainers> GetGainers(int take = 12)
+    {
+        Gainers[] values = [
+            .. Enum.GetValues<SectorType>().Select(type => new Gainers()
+            {
+                Type = type.ToString(),
+                Change = new Faker().Random.Double(-0.5, 0.5)
+            })
+        ];
         
-        return new GainersData(gainers.Generate(5), new DateTimeOffset(DateTime.Now));
+        return [.. values.Take(take)];
     }
 }

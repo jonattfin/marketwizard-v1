@@ -24,7 +24,6 @@ if (app.Environment.IsDevelopment())
 var repo = new Repository();
 
 var api = app.MapGroup("/api");
-api.MapGet("weatherforecast", repo.GetWeatherForecast) .WithName("GetWeatherForecast");
 
 api.MapGet("indices", repo.GetIndices).WithName("GetIndices");
 api.MapGet("top-news", repo.GetTopNews) .WithName("GetTopNews");

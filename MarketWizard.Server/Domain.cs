@@ -61,7 +61,7 @@ public enum SectorType
 }
 
 public record SectorPerformance(
-    SectorType Type,
+    string Type,
     double Change,
     string Country
 )
@@ -78,7 +78,7 @@ public record SectorPerformanceData(
 );
 
 public record Gainers(
-    SectorType Type,
+    string Type,
     double Change,
     string Country
 )

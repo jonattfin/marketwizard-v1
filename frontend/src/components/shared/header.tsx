@@ -136,7 +136,6 @@ export type HeaderMenuType = {
 export default function Header({theme, setTheme}: Readonly<HeaderMenuType>) {
   return (
     <>
-      <div>&nbsp;</div>
       <Flex justify="space-between">
         <Logo/>
         <HamburgerMenu theme={theme} setTheme={setTheme}/>

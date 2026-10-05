@@ -140,14 +140,14 @@ export type IndicePerformanceDataType = {
 };
 
 export enum SectorType {
-  BasicMaterials = "Basic Materials",
+  BasicMaterials = "BasicMaterials",
   Telecom = "Telecom",
-  ConsumerGoods = "Consumer Goods",
-  CustomerStaples = "Customer Staples",
-  ConsumerServices = "Consumer Services",
+  ConsumerGoods = "ConsumerGoods",
+  CustomerStaples = "CustomerStaples",
+  ConsumerServices = "ConsumerServices",
   Energy = "Energy",
   Financials = "Financials",
-  HealthCare = "Health Care",
+  HealthCare = "HealthCare",
   Industrials = "Industrials",
   Materials = "Materials",
   Utilities = "Utilities",
