@@ -1,4 +1,3 @@
-using MarketWizard.Server;
 using MarketWizard.Server.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,16 +27,19 @@ var watchlistRepo = new WatchlistRepository();
 var api = app.MapGroup("/api");
 
 api.MapGet("indices", repo.GetIndices).WithName("GetIndices");
-api.MapGet("top-news", repo.GetTopNews) .WithName("GetTopNews");
-api.MapGet("sector-performance", repo.GetSectorPerformance) .WithName("GetSectorPerformance");
+api.MapGet("top-news", repo.GetTopNews).WithName("GetTopNews");
+api.MapGet("sector-performance", repo.GetSectorPerformance).WithName("GetSectorPerformance");
 
-api.MapGet("top-gainers", repo.GetTopGainers) .WithName("GetTopGainers");
-api.MapGet("top-losers", repo.GetTopLosers) .WithName("GetTopLosers");
+api.MapGet("top-gainers", repo.GetTopGainers).WithName("GetTopGainers");
+api.MapGet("top-losers", repo.GetTopLosers).WithName("GetTopLosers");
 
-api.MapGet("top-industries", repo.GetTopIndustries) .WithName("GetTopIndustries");
-api.MapGet("worst-industries", repo.GetWorstIndustries) .WithName("GetWorstIndustries");
+api.MapGet("top-industries", repo.GetTopIndustries).WithName("GetTopIndustries");
+api.MapGet("worst-industries", repo.GetWorstIndustries).WithName("GetWorstIndustries");
 
 api.MapGet("watchlist", watchlistRepo.GetAll).WithName("GetWatchlist");
+api.MapPost("watchlist", watchlistRepo.CreateWatchlist).WithName("CreateWatchlist");
+api.MapPut("watchlist", watchlistRepo.UpdateWatchlist).WithName("UpdateWatchlist");
+api.MapDelete("watchlist", watchlistRepo.DeleteWatchlist).WithName("DeleteWatchlist");
 
 app.MapDefaultEndpoints();
 
