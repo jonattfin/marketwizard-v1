@@ -1,4 +1,5 @@
 using MarketWizard.Server;
+using MarketWizard.Server.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-var repo = new Repository();
+var repo = new MiscRepository();
+var watchlistRepo = new WatchlistRepository();
 
 var api = app.MapGroup("/api");
 
@@ -34,6 +36,8 @@ api.MapGet("top-losers", repo.GetTopLosers) .WithName("GetTopLosers");
 
 api.MapGet("top-industries", repo.GetTopIndustries) .WithName("GetTopIndustries");
 api.MapGet("worst-industries", repo.GetWorstIndustries) .WithName("GetWorstIndustries");
+
+api.MapGet("watchlist", watchlistRepo.GetAll).WithName("GetWatchlist");
 
 app.MapDefaultEndpoints();
 

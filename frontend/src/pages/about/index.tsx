@@ -3,9 +3,9 @@ import {MyAppNav} from "../../components/shared/nav.tsx";
 
 function Index() {
   const query = useQuery({
-    queryKey: [`weatherforecast`],
+    queryKey: [`watchlist`],
     queryFn: async () => {
-      const response = await fetch(`/api/weatherforecast`);
+      const response = await fetch(`/api/watchlist`);
       return await response.json();
     }
   });

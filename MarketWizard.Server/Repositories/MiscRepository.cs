@@ -1,8 +1,8 @@
 using Bogus;
 
-namespace MarketWizard.Server;
+namespace MarketWizard.Server.Repositories;
 
-public class Repository
+public class MiscRepository
 {
     private static readonly string[] CountryCodes =
     [
@@ -18,7 +18,7 @@ public class Repository
         "USA"
     ];
 
-    public IndicePerformanceData GetIndices()
+    public async Task<IndicePerformanceData> GetIndices()
     {
         var indices = CountryCodes.Select(code => new IndicePerformance
         {
@@ -28,10 +28,11 @@ public class Repository
             RegularMarketPrice = Random.Shared.Next(5_000, 100_000)
         }).ToList();
 
-        return new IndicePerformanceData(indices, new DateTimeOffset(DateTime.Now));
+        var data = new IndicePerformanceData(indices, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public TopNewsData GetTopNews()
+    public async Task<TopNewsData> GetTopNews()
     {
         var news = new Faker<TopNews>()
             .RuleFor(o => o.Text, f => f.Lorem.Sentence())
@@ -40,10 +41,11 @@ public class Repository
             .RuleFor(o => o.Source, f => f.Internet.Url())
             .RuleFor(o => o.Source, f => f.Company.CompanyName());
 
-        return new TopNewsData(news.Generate(10), new DateTimeOffset(DateTime.Now));
+        var data = new TopNewsData(news.Generate(10), new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public SectorPerformanceData GetSectorPerformance()
+    public async Task<SectorPerformanceData> GetSectorPerformance()
     {
         var sectorPerformance = Enum.GetValues<SectorType>().Select(type => new SectorPerformance()
         {
@@ -51,31 +53,36 @@ public class Repository
             Change = new Faker().Random.Double(-0.5, 0.5)
         }).ToList();
 
-        return new SectorPerformanceData(sectorPerformance, new DateTimeOffset(DateTime.Now));
+        var data = new SectorPerformanceData(sectorPerformance, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public GainersData GetTopGainers()
+    public async Task<GainersData> GetTopGainers()
     {
         var topGainers = GetGainers(6);
-        return new GainersData(topGainers, new DateTimeOffset(DateTime.Now));
+        var data = new GainersData(topGainers, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public GainersData GetTopLosers()
+    public async Task<GainersData> GetTopLosers()
     {
         var topLosers = GetGainers(6);
-        return new GainersData(topLosers, new DateTimeOffset(DateTime.Now));
+        var data = new GainersData(topLosers, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public GainersData GetTopIndustries()
+    public async Task<GainersData> GetTopIndustries()
     {
         var topIndustries = GetGainers(6);
-        return new GainersData(topIndustries, new DateTimeOffset(DateTime.Now));
+        var data = new GainersData(topIndustries, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
 
-    public GainersData GetWorstIndustries()
+    public async Task<GainersData> GetWorstIndustries()
     {
         var worstIndustries = GetGainers(6);
-        return new GainersData(worstIndustries, new DateTimeOffset(DateTime.Now));
+        var data = new GainersData(worstIndustries, new DateTimeOffset(DateTime.Now));
+        return await Task.FromResult(data);
     }
     
     private List<Gainers> GetGainers(int take = 12)
