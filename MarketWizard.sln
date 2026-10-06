@@ -8,6 +8,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketWizard.Server", "Mark
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "frontend", "frontend\frontend.esproj", "{6102ACE1-24AF-4968-A555-668C12DB3A23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketWizard.Infrastructure", "MarketWizard.Infrastructure\MarketWizard.Infrastructure.csproj", "{2D1B7209-ED49-4829-B7DC-6445EA58E31A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{9E192098-454C-43B8-8E24-DC9DE6EB64E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketWizard.Domain", "MarketWizard.Domain\MarketWizard.Domain.csproj", "{E3F91482-F9CA-4CAD-B36B-7D361540987D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketWizard.Application", "MarketWizard.Application\MarketWizard.Application.csproj", "{938B5818-F913-41A4-8A67-01109E3228EC}"
+EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,11 +36,27 @@ Global
 		{6102ACE1-24AF-4968-A555-668C12DB3A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6102ACE1-24AF-4968-A555-668C12DB3A23}.Release|Any CPU.Build.0 = Release|Any CPU
 
+		{2D1B7209-ED49-4829-B7DC-6445EA58E31A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D1B7209-ED49-4829-B7DC-6445EA58E31A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D1B7209-ED49-4829-B7DC-6445EA58E31A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D1B7209-ED49-4829-B7DC-6445EA58E31A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F91482-F9CA-4CAD-B36B-7D361540987D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F91482-F9CA-4CAD-B36B-7D361540987D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F91482-F9CA-4CAD-B36B-7D361540987D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F91482-F9CA-4CAD-B36B-7D361540987D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{938B5818-F913-41A4-8A67-01109E3228EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{938B5818-F913-41A4-8A67-01109E3228EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{938B5818-F913-41A4-8A67-01109E3228EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{938B5818-F913-41A4-8A67-01109E3228EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3EDD92A-C36F-4D67-AC53-4B4BDA076068}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E3F91482-F9CA-4CAD-B36B-7D361540987D} = {9E192098-454C-43B8-8E24-DC9DE6EB64E4}
+		{938B5818-F913-41A4-8A67-01109E3228EC} = {9E192098-454C-43B8-8E24-DC9DE6EB64E4}
 	EndGlobalSection
 EndGlobal

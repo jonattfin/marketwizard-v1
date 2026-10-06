@@ -1,4 +1,6 @@
-using MarketWizard.Server.Repositories;
+using Infrastructure.Repositories;
+using MarketWizard.Application.Interfaces;
+using MarketWizard.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +10,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-builder.Services.AddSingleton<WatchlistRepository>();
-builder.Services.AddSingleton<MiscRepository>();
+builder.Services.AddSingleton<IWatchlistRepository, WatchlistRepository>();
+builder.Services.AddSingleton<IMiscRepository, MiscRepository>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -26,24 +28,24 @@ if (app.Environment.IsDevelopment())
 
 var api = app.MapGroup("/api");
 
-api.MapGet("indices", async (MiscRepository repo) => await repo.GetIndices()).WithName("GetIndices");
-api.MapGet("top-news", async (MiscRepository repo) => await repo.GetTopNews()).WithName("GetTopNews");
-api.MapGet("sector-performance", async (MiscRepository repo) => await repo.GetSectorPerformance()).WithName("GetSectorPerformance");
+api.MapGet("indices", async (IMiscRepository repo) => await repo.GetIndices()).WithName("GetIndices");
+api.MapGet("top-news", async (IMiscRepository repo) => await repo.GetTopNews()).WithName("GetTopNews");
+api.MapGet("sector-performance", async (IMiscRepository repo) => await repo.GetSectorPerformance()).WithName("GetSectorPerformance");
 
-api.MapGet("top-gainers", async (MiscRepository repo) => await repo.GetTopGainers()).WithName("GetTopGainers");
-api.MapGet("top-losers", async (MiscRepository repo) => await repo.GetTopLosers()).WithName("GetTopLosers");
+api.MapGet("top-gainers", async (IMiscRepository repo) => await repo.GetTopGainers()).WithName("GetTopGainers");
+api.MapGet("top-losers", async (IMiscRepository repo) => await repo.GetTopLosers()).WithName("GetTopLosers");
 
-api.MapGet("top-industries", async (MiscRepository repo) => await repo.GetTopIndustries()).WithName("GetTopIndustries");
-api.MapGet("worst-industries", async (MiscRepository repo) => await repo.GetWorstIndustries()).WithName("GetWorstIndustries");
+api.MapGet("top-industries", async (IMiscRepository repo) => await repo.GetTopIndustries()).WithName("GetTopIndustries");
+api.MapGet("worst-industries", async (IMiscRepository repo) => await repo.GetWorstIndustries()).WithName("GetWorstIndustries");
 
-api.MapGet("watchlist", async (WatchlistRepository repo) => await repo.GetAll()).WithName("GetWatchlist");
-api.MapPost("watchlist", async (WatchlistRepository repo) => await repo.CreateWatchlist()).WithName("CreateWatchlist");
-api.MapPut("watchlist/{id}", async (string id, UpdateWatchlistDto dto, WatchlistRepository repo) =>
+api.MapGet("watchlist", async (IWatchlistRepository repo) => await repo.GetAll()).WithName("GetWatchlist");
+api.MapPost("watchlist", async (IWatchlistRepository repo) => await repo.CreateWatchlist()).WithName("CreateWatchlist");
+api.MapPut("watchlist/{id}", async (string id, UpdateWatchlistDto dto, IWatchlistRepository repo) =>
 {
     var updated = await repo.UpdateWatchlist(id, dto);
     return updated is not null ? Results.Ok(updated) : Results.NotFound();
 }).WithName("UpdateWatchlist");
-api.MapDelete("watchlist/{id}", async (string id, WatchlistRepository repo) =>
+api.MapDelete("watchlist/{id}", async (string id, IWatchlistRepository repo) =>
 {
     await repo.DeleteWatchlist(id);
     return Results.NoContent();

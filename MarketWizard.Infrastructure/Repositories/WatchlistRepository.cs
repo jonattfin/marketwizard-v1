@@ -1,6 +1,11 @@
-namespace MarketWizard.Server.Repositories;
+using MarketWizard.Application.Interfaces;
+using MarketWizard.Domain.Entities;
 
-public class WatchlistRepository
+namespace Infrastructure.Repositories;
+
+
+
+public class WatchlistRepository : IWatchlistRepository
 {
     private readonly List<WatchlistType> _watchlists =
     [
@@ -68,20 +73,3 @@ public class WatchlistRepository
     }
 }
 
-public class WatchlistItemType
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Ticker { get; set; }
-}
-
-public class WatchlistType
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public List<WatchlistItemType> Items { get; set; }
-}
-
-public record UpdateWatchlistDto(string Name);
-public record WatchlistItemDto(string Id, string Ticker);

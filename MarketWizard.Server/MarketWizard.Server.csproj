@@ -17,4 +17,8 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MarketWizard.Infrastructure\MarketWizard.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>
