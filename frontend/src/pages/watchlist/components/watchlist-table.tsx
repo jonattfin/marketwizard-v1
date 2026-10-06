@@ -35,6 +35,11 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(watchlistItem),
       });
+      
+      if (!response.ok) {
+        throw new Error("Watchlist item can't be created! Please try again later!");
+      }
+      
       return await response.json();
     },
   });
@@ -46,7 +51,10 @@ export const WatchlistTable = ({watchlist}: WatchlistTableType) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(watchlist),
       });
-      return await response.json();
+      
+      if (!response.ok) {
+        throw new Error("Watchlist item can't be deleted! Please try again later!");
+      }
     },
   });
 

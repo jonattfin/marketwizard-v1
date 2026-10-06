@@ -14,12 +14,17 @@ function Index() {
   });
 
   const useUpdateWatchlist = useMutation({
-    mutationFn: async (watchlist: { id: string; name: string }) => {
-      const response = await fetch("/api/watchlist", {
+    mutationFn: async ({id, name}: {id: string, name: string}) => {
+      const response = await fetch(`/api/watchlist/${id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(watchlist),
+        body: JSON.stringify({name}),
       });
+      
+      if (!response.ok) {
+        throw new Error("Watchlist can't be updated! Please try again later!");
+      }
+      
       return await response.json();
     },
     onError: () => {
@@ -31,13 +36,15 @@ function Index() {
   });
 
   const useDeleteWatchlist = useMutation({
-    mutationFn: async (watchlist: { id: string }) => {
-      const response = await fetch("/api/watchlist", {
+    mutationFn: async ({id}: { id: string }) => {
+      const response = await fetch(`/api/watchlist/${id}`, {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(watchlist),
       });
-      return await response.json();
+      
+      if (!response.ok) {
+        throw new Error("Watchlist can't be deleted! Please try again later!");
+      }
     },
     onError: () => {
       toaster.create({

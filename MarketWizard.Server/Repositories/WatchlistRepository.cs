@@ -31,20 +31,39 @@ public class WatchlistRepository
         return Task.CompletedTask;
     }
 
-    public Task UpdateWatchlist(string id, string name)
+    public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto)
     {
         var watchlist = _watchlists.FirstOrDefault(w => w.Id == id);
-        if (watchlist != null)
-        {
-            watchlist.Name = name;
-        }
+        watchlist?.Name = dto.Name;
 
-        return Task.CompletedTask;
+        return Task.FromResult(watchlist);
     }
 
     public Task DeleteWatchlist(string id)
     {
         _watchlists.RemoveAll(w => w.Id == id);
+        return Task.CompletedTask;
+    }
+
+    public Task CreateWatchlistItem(WatchlistItemDto dto)
+    {
+        var watchlist = _watchlists.FirstOrDefault(w => w.Id == dto.Id);
+        watchlist?.Items.Add(new WatchlistItemType
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = dto.Ticker,
+            Description = "Description",
+            Ticker = dto.Ticker
+        });
+        
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteWatchlistItem(WatchlistItemDto dto)
+    {
+        var watchlist = _watchlists.FirstOrDefault(w => w.Id == dto.Id);
+        watchlist?.Items.RemoveAll(i => i.Ticker == dto.Ticker);
+        
         return Task.CompletedTask;
     }
 }
@@ -63,3 +82,6 @@ public class WatchlistType
     public string Name { get; set; }
     public List<WatchlistItemType> Items { get; set; }
 }
+
+public record UpdateWatchlistDto(string Name);
+public record WatchlistItemDto(string Id, string Ticker);
