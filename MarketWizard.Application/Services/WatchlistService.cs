@@ -8,9 +8,9 @@ public interface IWatchlistService
     Task<List<WatchlistType>> GetAll();
     Task CreateWatchlist();
     Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto);
-    Task DeleteWatchlist(string id);
+    Task<bool> DeleteWatchlist(string id);
     Task CreateWatchlistItem(WatchlistItemDto dto);
-    Task DeleteWatchlistItem(WatchlistItemDto dto);
+    Task<bool> DeleteWatchlistItem(WatchlistItemDto dto);
 }
 
 public class WatchlistService(IWatchlistRepository watchlistRepository) : IWatchlistService
@@ -18,8 +18,8 @@ public class WatchlistService(IWatchlistRepository watchlistRepository) : IWatch
     public Task<List<WatchlistType>> GetAll() => watchlistRepository.GetAll();
     public Task CreateWatchlist() => watchlistRepository.CreateWatchlist();
     public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto) => watchlistRepository.UpdateWatchlist(id, dto);
-    public Task DeleteWatchlist(string id) => watchlistRepository.DeleteWatchlist(id);
+    public Task<bool> DeleteWatchlist(string id) => watchlistRepository.DeleteWatchlist(id);
 
     public Task CreateWatchlistItem(WatchlistItemDto dto) => watchlistRepository.CreateWatchlistItem(dto);
-    public Task DeleteWatchlistItem(WatchlistItemDto dto) => watchlistRepository.DeleteWatchlistItem(dto);
+    public Task<bool> DeleteWatchlistItem(WatchlistItemDto dto) => watchlistRepository.DeleteWatchlistItem(dto);
 }

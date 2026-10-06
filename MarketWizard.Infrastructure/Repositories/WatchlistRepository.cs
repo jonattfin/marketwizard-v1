@@ -3,8 +3,6 @@ using MarketWizard.Domain.Entities;
 
 namespace Infrastructure.Repositories;
 
-
-
 public class WatchlistRepository : IWatchlistRepository
 {
     private readonly List<WatchlistType> _watchlists =
@@ -44,10 +42,10 @@ public class WatchlistRepository : IWatchlistRepository
         return Task.FromResult(watchlist);
     }
 
-    public Task DeleteWatchlist(string id)
+    public Task<bool> DeleteWatchlist(string id)
     {
-        _watchlists.RemoveAll(w => w.Id == id);
-        return Task.CompletedTask;
+        var removed = _watchlists.RemoveAll(w => w.Id == id);
+        return Task.FromResult(removed > 0);
     }
 
     public Task CreateWatchlistItem(WatchlistItemDto dto)
@@ -64,12 +62,12 @@ public class WatchlistRepository : IWatchlistRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteWatchlistItem(WatchlistItemDto dto)
+    public Task<bool> DeleteWatchlistItem(WatchlistItemDto dto)
     {
         var watchlist = _watchlists.FirstOrDefault(w => w.Id == dto.Id);
-        watchlist?.Items.RemoveAll(i => i.Ticker == dto.Ticker);
+        var removed = watchlist?.Items.RemoveAll(i => i.Ticker == dto.Ticker);
         
-        return Task.CompletedTask;
+        return Task.FromResult(removed > 0);
     }
 }
 
