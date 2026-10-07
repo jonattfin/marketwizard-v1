@@ -5,5 +5,9 @@ namespace Infrastructure.Persistence;
 
 public class MarketWizardContext : DbContext
 {
-    public DbSet<CronJob> CronJobs { get; set; }
+    public MarketWizardContext(DbContextOptions<MarketWizardContext> options) : base(options)
+    {
+    }
+
+    public DbSet<CronJob> CronJobs => Set<CronJob>();
 }

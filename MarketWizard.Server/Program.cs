@@ -1,6 +1,8 @@
 using Infrastructure;
+using Infrastructure.Persistence;
 using MarketWizard.Application;
 using MarketWizard.Server;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +12,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-builder.Services.AddApplicationServices()
-    .AddInfrastructureServices();
+builder.Services.AddApplicationServices();
+builder.AddInfrastructureServices();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -24,6 +26,12 @@ app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<MarketWizardContext>();
+    await db.Database.MigrateAsync();
 }
 
 app.MapEndpoints();
