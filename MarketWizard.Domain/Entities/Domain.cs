@@ -73,6 +73,17 @@ public class GenericData<T>
     public DateTimeOffset? Date { get; set; } = new DateTimeOffset(DateTime.Now);
 }
 
+public class PagedResult<T>
+{
+    public List<T> Items { get; set; } = [];
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public int TotalCount { get; set; }
+    public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 0;
+    public bool HasPreviousPage => PageNumber > 1;
+    public bool HasNextPage => PageNumber < TotalPages;
+}
+
 public class WatchlistItemType
 {
     public string Id { get; set; }
@@ -89,5 +100,7 @@ public class WatchlistType
 }
 
 public record CreateWatchlistDto(string? Name);
+
 public record UpdateWatchlistDto(string Name);
+
 public record WatchlistItemDto(string? Id, string? Ticker, string? WatchlistId = null, string? ItemId = null);

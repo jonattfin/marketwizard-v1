@@ -30,7 +30,30 @@ public class WatchlistRepository : IWatchlistRepository
         return Task.FromResult(_watchlists);
     }
 
-    public Task<WatchlistType> CreateWatchlist(CreateWatchlistDto? dto = null, CancellationToken cancellationToken = default)
+    public Task<PagedResult<WatchlistType>> GetPaged(int pageNumber, int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var totalCount = _watchlists.Count;
+        var items = _watchlists
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return Task.FromResult(new PagedResult<WatchlistType>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        });
+    }
+
+    public Task<WatchlistType> CreateWatchlist(CreateWatchlistDto? dto = null,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var name = string.IsNullOrWhiteSpace(dto?.Name) ? "Watchlist " + Guid.NewGuid() : dto.Name;
@@ -44,7 +67,8 @@ public class WatchlistRepository : IWatchlistRepository
         return Task.FromResult(watchlist);
     }
 
-    public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto, CancellationToken cancellationToken = default)
+    public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var watchlist = _watchlists.FirstOrDefault(w => w.Id == id);
@@ -73,7 +97,7 @@ public class WatchlistRepository : IWatchlistRepository
             Description = "Description",
             Ticker = ticker
         });
-        
+
         return Task.CompletedTask;
     }
 
@@ -84,8 +108,7 @@ public class WatchlistRepository : IWatchlistRepository
         var targetItemOrTicker = dto.ItemId ?? dto.Ticker;
         var watchlist = _watchlists.FirstOrDefault(w => w.Id == targetWatchlistId);
         var removed = watchlist?.Items.RemoveAll(i => i.Ticker == targetItemOrTicker || i.Id == targetItemOrTicker);
-        
+
         return Task.FromResult((removed ?? 0) > 0);
     }
 }
-

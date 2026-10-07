@@ -96,10 +96,17 @@ export type WatchListType = {
   items: WatchlistItemType[];
 };
 
-export type WatchListPageType = {
-  items: WatchListType[];
-  nextCursor: string | null;
+export type PagedResult<T> = {
+  items: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 };
+
+export type WatchListPageType = PagedResult<WatchListType>;
 
 // Others
 

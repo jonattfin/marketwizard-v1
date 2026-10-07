@@ -19,8 +19,6 @@ public static class ServiceRegistration
 
           services.AddValidatorsFromAssembly(typeof(ServiceRegistration).Assembly);
 
-          services.AddScoped<IMiscService, MiscService>();
-          services.AddScoped<IWatchlistService, WatchlistService>();
           services.AddScoped<IMarketDataSyncService, MarketDataSyncService>();
           
           return services;

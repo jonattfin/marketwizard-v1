@@ -1,19 +1,25 @@
 import {useState} from "react";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {Breadcrumb, Button, Flex, Input, Popover, Portal} from "@chakra-ui/react";
-import {LuCirclePlus} from "react-icons/lu";
+import {Breadcrumb, Button, Flex, HStack, IconButton, Input, Popover, Portal, Text} from "@chakra-ui/react";
+import {LuCirclePlus, LuChevronLeft, LuChevronRight, LuChevronsLeft, LuChevronsRight} from "react-icons/lu";
 import {AccordionWatchlist} from "./components/accordion-watchlist";
 import {queryClient} from "../../components/shared/queryClient";
 import {toaster} from "../../components/ui/toaster";
+import type {WatchListPageType} from "../../components/shared/types";
 
 function Index() {
   const [open, setOpen] = useState(false);
   const [newWatchlistName, setNewWatchlistName] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
-  const query = useQuery({
-    queryKey: [`watchlist`],
+  const query = useQuery<WatchListPageType>({
+    queryKey: [`watchlist`, pageNumber, pageSize],
     queryFn: async () => {
-      const response = await fetch(`/api/watchlist`);
+      const response = await fetch(`/api/watchlist?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch watchlists");
+      }
       return await response.json();
     }
   });
@@ -85,6 +91,7 @@ function Index() {
     await useCreateWatchlist.mutateAsync({
       name,
     });
+    setPageNumber(1);
     await queryClient.invalidateQueries({queryKey: ["watchlist"]});
 
     toaster.create({
@@ -110,6 +117,9 @@ function Index() {
     await useDeleteWatchlist.mutateAsync({
       id,
     });
+    if ((query.data?.items?.length ?? 0) <= 1 && pageNumber > 1) {
+      setPageNumber((prev) => prev - 1);
+    }
     await queryClient.invalidateQueries({queryKey: ["watchlist"]});
 
     toaster.create({
@@ -117,6 +127,12 @@ function Index() {
       type: "success",
     });
   };
+
+  const watchlists = query.data?.items ?? [];
+  const totalCount = query.data?.totalCount ?? 0;
+  const totalPages = query.data?.totalPages ?? 0;
+  const hasPreviousPage = query.data?.hasPreviousPage ?? pageNumber > 1;
+  const hasNextPage = query.data?.hasNextPage ?? (totalPages > 0 && pageNumber < totalPages);
 
   return (
     <>
@@ -181,11 +197,87 @@ function Index() {
       <div>&nbsp;</div>
       <AccordionWatchlist
         {...{
-          watchlists: query.data ?? [],
+          watchlists,
           handleUpdate,
           handleDelete,
         }}
       />
+      <div>&nbsp;</div>
+      {totalCount > 0 && (
+        <Flex
+          direction={{base: "column", sm: "row"}}
+          justify="space-between"
+          align="center"
+          gap="4"
+          py="2"
+        >
+          <Flex align="center" gap="4">
+            <Text fontSize="sm" color="gray.500">
+              Showing {(pageNumber - 1) * pageSize + 1} to{" "}
+              {Math.min(pageNumber * pageSize, totalCount)} of {totalCount} watchlists
+            </Text>
+            <HStack gap="1">
+              <Text fontSize="xs" color="gray.500">
+                Per page:
+              </Text>
+              {[5, 10, 20].map((size) => (
+                <Button
+                  key={size}
+                  size="2xs"
+                  variant={pageSize === size ? "solid" : "outline"}
+                  onClick={() => {
+                    setPageSize(size);
+                    setPageNumber(1);
+                  }}
+                >
+                  {size}
+                </Button>
+              ))}
+            </HStack>
+          </Flex>
+          <HStack gap="2">
+            <IconButton
+              size="sm"
+              variant="outline"
+              disabled={!hasPreviousPage}
+              onClick={() => setPageNumber(1)}
+              aria-label="First page"
+            >
+              <LuChevronsLeft />
+            </IconButton>
+            <IconButton
+              size="sm"
+              variant="outline"
+              disabled={!hasPreviousPage}
+              onClick={() => setPageNumber((prev) => Math.max(1, prev - 1))}
+              aria-label="Previous page"
+            >
+              <LuChevronLeft />
+            </IconButton>
+            <Text fontSize="sm" px="2">
+              Page {pageNumber} of {totalPages || 1}
+            </Text>
+            <IconButton
+              size="sm"
+              variant="outline"
+              disabled={!hasNextPage}
+              onClick={() => setPageNumber((prev) => Math.min(totalPages, prev + 1))}
+              aria-label="Next page"
+            >
+              <LuChevronRight />
+            </IconButton>
+            <IconButton
+              size="sm"
+              variant="outline"
+              disabled={!hasNextPage}
+              onClick={() => setPageNumber(totalPages)}
+              aria-label="Last page"
+            >
+              <LuChevronsRight />
+            </IconButton>
+          </HStack>
+        </Flex>
+      )}
       <div>&nbsp;</div>
     </>
   )

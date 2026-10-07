@@ -29,14 +29,20 @@ public class MediatRHandlersUnitTest
     public async Task GetWatchlistsQueryHandler_DelegatesToRepository()
     {
         var repo = Substitute.For<IWatchlistRepository>();
-        var watchlists = new List<WatchlistType> { new() { Id = "1", Name = "W1", Items = [] } };
-        repo.GetAll(Arg.Any<CancellationToken>()).Returns(watchlists);
+        var pagedResult = new PagedResult<WatchlistType>
+        {
+            Items = [new() { Id = "1", Name = "W1", Items = [] }],
+            PageNumber = 1,
+            PageSize = 10,
+            TotalCount = 1
+        };
+        repo.GetPaged(1, 10, Arg.Any<CancellationToken>()).Returns(pagedResult);
 
         var handler = new GetWatchlistsQueryHandler(repo);
-        var result = await handler.Handle(new GetWatchlistsQuery(), CancellationToken.None);
+        var result = await handler.Handle(new GetWatchlistsQuery(1, 10), CancellationToken.None);
 
-        Assert.Same(watchlists, result);
-        await repo.Received(1).GetAll(Arg.Any<CancellationToken>());
+        Assert.Same(pagedResult, result);
+        await repo.Received(1).GetPaged(1, 10, Arg.Any<CancellationToken>());
     }
 
     [Fact]
