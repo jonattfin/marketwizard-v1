@@ -88,5 +88,6 @@ public class WatchlistType
     public List<WatchlistItemType> Items { get; set; }
 }
 
+public record CreateWatchlistDto(string? Name);
 public record UpdateWatchlistDto(string Name);
-public record WatchlistItemDto(string Id, string Ticker);
+public record WatchlistItemDto(string? Id, string? Ticker, string? WatchlistId = null, string? ItemId = null);

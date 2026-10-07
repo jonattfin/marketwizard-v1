@@ -15,7 +15,7 @@ public static class ServiceRegistration
      {
           builder.AddNpgsqlDbContext<MarketWizardContext>("marketwizard");
 
-          builder.Services.AddScoped<IWatchlistRepository, WatchlistRepository>();
+          builder.Services.AddScoped<IWatchlistRepository, SqlWatchlistRepository>();
           builder.Services.AddScoped<IMiscRepository, SqlMiscRepository>();
           builder.Services.AddScoped<ICronJobRepository, CronJobRepository>();
           builder.Services.AddScoped<IMarketDataProvider, MockMarketDataProvider>();
