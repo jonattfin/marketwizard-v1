@@ -208,4 +208,17 @@ public class SqlMiscRepositoryUnitTest
         Assert.NotNull(sector);
         Assert.Empty(sector.Items);
     }
+
+    [Fact]
+    public async Task GetIndices_WhenCancellationTokenIsCancelled_ThrowsOperationCanceledException()
+    {
+        var dbName = Guid.NewGuid().ToString();
+        await using var context = CreateContext(dbName);
+        var repo = new SqlMiscRepository(context);
+
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => repo.GetIndices(cts.Token));
+    }
 }

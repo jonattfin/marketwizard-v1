@@ -20,8 +20,9 @@ public class MiscRepository : IMiscRepository
         "USA"
     ];
 
-    public async Task<IndicePerformanceData> GetIndices()
+    public async Task<IndicePerformanceData> GetIndices(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var indices = CountryCodes.Select(code => new IndicePerformance
         {
             Name = code,
@@ -34,8 +35,9 @@ public class MiscRepository : IMiscRepository
         return await Task.FromResult(data);
     }
 
-    public async Task<TopNewsData> GetTopNews()
+    public async Task<TopNewsData> GetTopNews(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var news = new Faker<TopNews>()
             .RuleFor(o => o.Text, f => f.Lorem.Sentence())
             .RuleFor(o => o.Description, f => f.Lorem.Sentence())
@@ -47,8 +49,9 @@ public class MiscRepository : IMiscRepository
         return await Task.FromResult(data);
     }
 
-    public async Task<SectorPerformanceData> GetSectorPerformance()
+    public async Task<SectorPerformanceData> GetSectorPerformance(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var items = Enum.GetValues<SectorType>().Select(type => new SectorPerformance()
         {
             Type = type.ToString(),
@@ -59,29 +62,33 @@ public class MiscRepository : IMiscRepository
         return await Task.FromResult(data);
     }
 
-    public async Task<GainersData> GetTopGainers()
+    public async Task<GainersData> GetTopGainers(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var items = GetGainers(6);
         var data = new GainersData{ Items = items };
         return await Task.FromResult(data);
     }
 
-    public async Task<GainersData> GetTopLosers()
+    public async Task<GainersData> GetTopLosers(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var items = GetGainers(6);
         var data = new GainersData{ Items = items };
         return await Task.FromResult(data);
     }
 
-    public async Task<GainersData> GetTopIndustries()
+    public async Task<GainersData> GetTopIndustries(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var items = GetGainers(6);
         var data = new GainersData{ Items = items };
         return await Task.FromResult(data);
     }
 
-    public async Task<GainersData> GetWorstIndustries()
+    public async Task<GainersData> GetWorstIndustries(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var items = GetGainers(6);
         var data = new GainersData{ Items = items };
         return await Task.FromResult(data);

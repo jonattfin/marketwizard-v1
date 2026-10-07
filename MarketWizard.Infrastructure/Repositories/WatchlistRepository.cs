@@ -24,50 +24,68 @@ public class WatchlistRepository : IWatchlistRepository
         })
     ];
 
-    public Task<List<WatchlistType>> GetAll()
+    public Task<List<WatchlistType>> GetAll(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         return Task.FromResult(_watchlists);
     }
 
-    public Task CreateWatchlist()
+    public Task<WatchlistType> CreateWatchlist(CreateWatchlistDto? dto = null, CancellationToken cancellationToken = default)
     {
-        return Task.CompletedTask;
+        cancellationToken.ThrowIfCancellationRequested();
+        var name = string.IsNullOrWhiteSpace(dto?.Name) ? "Watchlist " + Guid.NewGuid() : dto.Name;
+        var watchlist = new WatchlistType
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = name,
+            Items = []
+        };
+        _watchlists.Add(watchlist);
+        return Task.FromResult(watchlist);
     }
 
-    public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto)
+    public Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var watchlist = _watchlists.FirstOrDefault(w => w.Id == id);
         watchlist?.Name = dto.Name;
 
         return Task.FromResult(watchlist);
     }
 
-    public Task<bool> DeleteWatchlist(string id)
+    public Task<bool> DeleteWatchlist(string id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var removed = _watchlists.RemoveAll(w => w.Id == id);
         return Task.FromResult(removed > 0);
     }
 
-    public Task CreateWatchlistItem(WatchlistItemDto dto)
+    public Task CreateWatchlistItem(WatchlistItemDto dto, CancellationToken cancellationToken = default)
     {
-        var watchlist = _watchlists.FirstOrDefault(w => w.Id == dto.Id);
+        cancellationToken.ThrowIfCancellationRequested();
+        var targetWatchlistId = dto.WatchlistId ?? dto.Id;
+        var watchlist = _watchlists.FirstOrDefault(w => w.Id == targetWatchlistId);
+        var ticker = dto.Ticker ?? string.Empty;
         watchlist?.Items.Add(new WatchlistItemType
         {
             Id = Guid.NewGuid().ToString(),
-            Name = dto.Ticker,
+            Name = ticker,
             Description = "Description",
-            Ticker = dto.Ticker
+            Ticker = ticker
         });
         
         return Task.CompletedTask;
     }
 
-    public Task<bool> DeleteWatchlistItem(WatchlistItemDto dto)
+    public Task<bool> DeleteWatchlistItem(WatchlistItemDto dto, CancellationToken cancellationToken = default)
     {
-        var watchlist = _watchlists.FirstOrDefault(w => w.Id == dto.Id);
-        var removed = watchlist?.Items.RemoveAll(i => i.Ticker == dto.Ticker);
+        cancellationToken.ThrowIfCancellationRequested();
+        var targetWatchlistId = dto.WatchlistId ?? dto.Id;
+        var targetItemOrTicker = dto.ItemId ?? dto.Ticker;
+        var watchlist = _watchlists.FirstOrDefault(w => w.Id == targetWatchlistId);
+        var removed = watchlist?.Items.RemoveAll(i => i.Ticker == targetItemOrTicker || i.Id == targetItemOrTicker);
         
-        return Task.FromResult(removed > 0);
+        return Task.FromResult((removed ?? 0) > 0);
     }
 }
 

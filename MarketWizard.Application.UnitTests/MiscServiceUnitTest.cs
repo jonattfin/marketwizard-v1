@@ -85,4 +85,18 @@ public class MiscServiceUnitTest
 
         Assert.Empty(data.Items);
     }
+
+    [Fact]
+    public async Task GetIndices_ForwardsCancellationToken()
+    {
+        var repo = Substitute.For<IMiscRepository>();
+        var cancellationToken = new CancellationToken(true);
+        repo.GetIndices(cancellationToken).Returns(new IndicePerformanceData { Items = [] });
+
+        var service = new MiscService(repo);
+        var data = await service.GetIndices(cancellationToken);
+
+        Assert.Empty(data.Items);
+        await repo.Received(1).GetIndices(cancellationToken);
+    }
 }

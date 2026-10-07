@@ -15,35 +15,35 @@ public class SqlMiscRepository(MarketWizardContext context) : IMiscRepository
         PropertyNameCaseInsensitive = true
     };
 
-    public Task<IndicePerformanceData> GetIndices() =>
-        GetLatestDataAsync<IndicePerformance, IndicePerformanceData>(c => new Snapshot(c.Date, c.IndicePerfomance));
+    public Task<IndicePerformanceData> GetIndices(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<IndicePerformance, IndicePerformanceData>(c => new Snapshot(c.Date, c.IndicePerfomance), cancellationToken);
 
-    public Task<TopNewsData> GetTopNews() =>
-        GetLatestDataAsync<TopNews, TopNewsData>(c => new Snapshot(c.Date, c.TopNews));
+    public Task<TopNewsData> GetTopNews(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<TopNews, TopNewsData>(c => new Snapshot(c.Date, c.TopNews), cancellationToken);
 
-    public Task<SectorPerformanceData> GetSectorPerformance() =>
-        GetLatestDataAsync<SectorPerformance, SectorPerformanceData>(c => new Snapshot(c.Date, c.SectorPerformance));
+    public Task<SectorPerformanceData> GetSectorPerformance(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<SectorPerformance, SectorPerformanceData>(c => new Snapshot(c.Date, c.SectorPerformance), cancellationToken);
 
-    public Task<GainersData> GetTopGainers() =>
-        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.Gainers));
+    public Task<GainersData> GetTopGainers(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.Gainers), cancellationToken);
 
-    public Task<GainersData> GetTopLosers() =>
-        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.Losers));
+    public Task<GainersData> GetTopLosers(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.Losers), cancellationToken);
 
-    public Task<GainersData> GetTopIndustries() =>
-        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.TopIndustries));
+    public Task<GainersData> GetTopIndustries(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.TopIndustries), cancellationToken);
 
-    public Task<GainersData> GetWorstIndustries() =>
-        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.WorstIndustries));
+    public Task<GainersData> GetWorstIndustries(CancellationToken cancellationToken = default) =>
+        GetLatestDataAsync<Gainers, GainersData>(c => new Snapshot(c.Date, c.WorstIndustries), cancellationToken);
 
-    private async Task<TData> GetLatestDataAsync<TItem, TData>(Expression<Func<CronJob, Snapshot>> projection)
+    private async Task<TData> GetLatestDataAsync<TItem, TData>(Expression<Func<CronJob, Snapshot>> projection, CancellationToken cancellationToken = default)
         where TData : GenericData<TItem>, new()
     {
         var snapshot = await context.CronJobs
             .OrderByDescending(c => c.Date)
             .AsNoTracking()
             .Select(projection)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         return DeserializeData<TItem, TData>(snapshot?.Date, snapshot?.Json);
     }
