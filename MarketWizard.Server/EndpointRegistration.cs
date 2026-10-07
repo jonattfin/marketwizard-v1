@@ -1,5 +1,8 @@
-using MarketWizard.Application.Services;
+using MarketWizard.Application.Features.Misc.Queries;
+using MarketWizard.Application.Features.Watchlists.Commands;
+using MarketWizard.Application.Features.Watchlists.Queries;
 using MarketWizard.Domain.Entities;
+using MediatR;
 
 namespace MarketWizard.Server;
 
@@ -9,52 +12,59 @@ public static class EndpointRegistration
     {
         var api = app.MapGroup("/api");
 
-        api.MapGet("indices", async (IMiscService service, CancellationToken cancellationToken) => await service.GetIndices(cancellationToken))
+        api.MapGet("indices", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetIndicesQuery(), cancellationToken))
             .WithName("GetIndices");
-        api.MapGet("top-news", async (IMiscService service, CancellationToken cancellationToken) => await service.GetTopNews(cancellationToken))
+        api.MapGet("top-news", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetTopNewsQuery(), cancellationToken))
             .WithName("GetTopNews");
-        api.MapGet("sector-performance", async (IMiscService service, CancellationToken cancellationToken) => await service.GetSectorPerformance(cancellationToken))
+        api.MapGet("sector-performance", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetSectorPerformanceQuery(), cancellationToken))
             .WithName("GetSectorPerformance");
 
-        api.MapGet("top-gainers", async (IMiscService service, CancellationToken cancellationToken) => await service.GetTopGainers(cancellationToken))
+        api.MapGet("top-gainers", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetTopGainersQuery(), cancellationToken))
             .WithName("GetTopGainers");
-        api.MapGet("top-losers", async (IMiscService service, CancellationToken cancellationToken) => await service.GetTopLosers(cancellationToken))
+        api.MapGet("top-losers", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetTopLosersQuery(), cancellationToken))
             .WithName("GetTopLosers");
 
-        api.MapGet("top-industries", async (IMiscService service, CancellationToken cancellationToken) => await service.GetTopIndustries(cancellationToken))
+        api.MapGet("top-industries", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetTopIndustriesQuery(), cancellationToken))
             .WithName("GetTopIndustries");
-        api.MapGet("worst-industries", async (IMiscService service, CancellationToken cancellationToken) => await service.GetWorstIndustries(cancellationToken))
+        api.MapGet("worst-industries", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetWorstIndustriesQuery(), cancellationToken))
             .WithName("GetWorstIndustries");
 
-        api.MapGet("watchlist", async (IWatchlistService service, CancellationToken cancellationToken) => await service.GetAll(cancellationToken))
+        api.MapGet("watchlist", async (ISender sender, CancellationToken cancellationToken) =>
+            await sender.Send(new GetWatchlistsQuery(), cancellationToken))
             .WithName("GetWatchlist");
-        api.MapPost("watchlist", async (CreateWatchlistDto? dto, IWatchlistService service, CancellationToken cancellationToken) =>
+        api.MapPost("watchlist", async (CreateWatchlistDto? dto, ISender sender, CancellationToken cancellationToken) =>
         {
-            var created = await service.CreateWatchlist(dto, cancellationToken);
+            var created = await sender.Send(new CreateWatchlistCommand(dto), cancellationToken);
             return Results.Created($"/api/watchlist/{created.Id}", created);
         }).WithName("CreateWatchlist");
-        api.MapPut("watchlist/{id}", async (string id, UpdateWatchlistDto dto, IWatchlistService service, CancellationToken cancellationToken) =>
+        api.MapPut("watchlist/{id}", async (string id, UpdateWatchlistDto dto, ISender sender, CancellationToken cancellationToken) =>
         {
-            var updated = await service.UpdateWatchlist(id, dto, cancellationToken);
+            var updated = await sender.Send(new UpdateWatchlistCommand(id, dto), cancellationToken);
             return updated is not null ? Results.Ok(updated) : Results.NotFound();
         }).WithName("UpdateWatchlist");
-        api.MapDelete("watchlist/{id}", async (string id, IWatchlistService service, CancellationToken cancellationToken) =>
+        api.MapDelete("watchlist/{id}", async (string id, ISender sender, CancellationToken cancellationToken) =>
         {
-            await service.DeleteWatchlist(id, cancellationToken);
+            await sender.Send(new DeleteWatchlistCommand(id), cancellationToken);
             return Results.NoContent();
         }).WithName("DeleteWatchlist");
-        
-        // api.MapPost("watchlist-item", async (WatchlistItemDto dto, IWatchlistService service, CancellationToken cancellationToken) =>
+
+        // api.MapPost("watchlist-item", async (WatchlistItemDto dto, ISender sender, CancellationToken cancellationToken) =>
         // {
-        //     await service.CreateWatchlistItem(dto, cancellationToken);
+        //     await sender.Send(new CreateWatchlistItemCommand(dto), cancellationToken);
         //     return Results.Ok();
         // }).WithName("CreateWatchlistItem");
         //
-        // api.MapDelete("watchlist-item", async (WatchlistItemDto dto, IWatchlistService service, CancellationToken cancellationToken) =>
+        // api.MapDelete("watchlist-item", async (WatchlistItemDto dto, ISender sender, CancellationToken cancellationToken) =>
         // {
-        //     var deleted = await service.DeleteWatchlistItem(dto, cancellationToken);
+        //     var deleted = await sender.Send(new DeleteWatchlistItemCommand(dto), cancellationToken);
         //     return deleted ? Results.NoContent() : Results.NotFound();
         // }).WithName("DeleteWatchlistItem");
-
     }
 }
