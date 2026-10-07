@@ -10,8 +10,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices()
+    .AddInfrastructureServices();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
