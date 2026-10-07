@@ -1,4 +1,5 @@
 using MarketWizard.Application.Features.Watchlists.Commands;
+using MarketWizard.Application.Features.Watchlists.Queries;
 using MarketWizard.Application.Validators;
 using MarketWizard.Domain.Entities;
 
@@ -6,6 +7,33 @@ namespace MarketWizard.Application.UnitTests;
 
 public class ValidatorsUnitTest
 {
+    [Fact]
+    public void GetWatchlistsQueryValidator_WhenValid_IsValid()
+    {
+        var validator = new GetWatchlistsQueryValidator();
+        var query = new GetWatchlistsQuery(1, 10);
+
+        var result = validator.Validate(query);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(-1, 10)]
+    [InlineData(1, 0)]
+    [InlineData(1, -5)]
+    [InlineData(1, 101)]
+    public void GetWatchlistsQueryValidator_WhenInvalid_ReturnsErrors(int pageNumber, int pageSize)
+    {
+        var validator = new GetWatchlistsQueryValidator();
+        var query = new GetWatchlistsQuery(pageNumber, pageSize);
+
+        var result = validator.Validate(query);
+
+        Assert.False(result.IsValid);
+    }
+
     [Fact]
     public void CreateWatchlistCommandValidator_WhenDtoNull_IsValid()
     {

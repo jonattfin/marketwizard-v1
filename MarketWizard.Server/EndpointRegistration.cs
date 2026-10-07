@@ -13,42 +13,44 @@ public static class EndpointRegistration
         var api = app.MapGroup("/api");
 
         api.MapGet("indices", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetIndicesQuery(), cancellationToken))
+                await sender.Send(new GetIndicesQuery(), cancellationToken))
             .WithName("GetIndices");
         api.MapGet("top-news", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetTopNewsQuery(), cancellationToken))
+                await sender.Send(new GetTopNewsQuery(), cancellationToken))
             .WithName("GetTopNews");
         api.MapGet("sector-performance", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetSectorPerformanceQuery(), cancellationToken))
+                await sender.Send(new GetSectorPerformanceQuery(), cancellationToken))
             .WithName("GetSectorPerformance");
 
         api.MapGet("top-gainers", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetTopGainersQuery(), cancellationToken))
+                await sender.Send(new GetTopGainersQuery(), cancellationToken))
             .WithName("GetTopGainers");
         api.MapGet("top-losers", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetTopLosersQuery(), cancellationToken))
+                await sender.Send(new GetTopLosersQuery(), cancellationToken))
             .WithName("GetTopLosers");
 
         api.MapGet("top-industries", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetTopIndustriesQuery(), cancellationToken))
+                await sender.Send(new GetTopIndustriesQuery(), cancellationToken))
             .WithName("GetTopIndustries");
         api.MapGet("worst-industries", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetWorstIndustriesQuery(), cancellationToken))
+                await sender.Send(new GetWorstIndustriesQuery(), cancellationToken))
             .WithName("GetWorstIndustries");
 
-        api.MapGet("watchlist", async (ISender sender, CancellationToken cancellationToken) =>
-            await sender.Send(new GetWatchlistsQuery(), cancellationToken))
+        api.MapGet("watchlist",
+                async (int? pageNumber, int? pageSize, ISender sender, CancellationToken cancellationToken) =>
+                    await sender.Send(new GetWatchlistsQuery(pageNumber ?? 1, pageSize ?? 10), cancellationToken))
             .WithName("GetWatchlist");
         api.MapPost("watchlist", async (CreateWatchlistDto? dto, ISender sender, CancellationToken cancellationToken) =>
         {
             var created = await sender.Send(new CreateWatchlistCommand(dto), cancellationToken);
             return Results.Created($"/api/watchlist/{created.Id}", created);
         }).WithName("CreateWatchlist");
-        api.MapPut("watchlist/{id}", async (string id, UpdateWatchlistDto dto, ISender sender, CancellationToken cancellationToken) =>
-        {
-            var updated = await sender.Send(new UpdateWatchlistCommand(id, dto), cancellationToken);
-            return updated is not null ? Results.Ok(updated) : Results.NotFound();
-        }).WithName("UpdateWatchlist");
+        api.MapPut("watchlist/{id}",
+            async (string id, UpdateWatchlistDto dto, ISender sender, CancellationToken cancellationToken) =>
+            {
+                var updated = await sender.Send(new UpdateWatchlistCommand(id, dto), cancellationToken);
+                return updated is not null ? Results.Ok(updated) : Results.NotFound();
+            }).WithName("UpdateWatchlist");
         api.MapDelete("watchlist/{id}", async (string id, ISender sender, CancellationToken cancellationToken) =>
         {
             await sender.Send(new DeleteWatchlistCommand(id), cancellationToken);

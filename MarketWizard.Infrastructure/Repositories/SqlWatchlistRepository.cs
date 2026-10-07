@@ -30,7 +30,46 @@ public class SqlWatchlistRepository(MarketWizardContext context) : IWatchlistRep
         }).ToList();
     }
 
-    public async Task<WatchlistType> CreateWatchlist(CreateWatchlistDto? dto = null, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<WatchlistType>> GetPaged(int pageNumber, int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var totalCount = await context.Watchlists.CountAsync(cancellationToken);
+
+        var watchlists = await context.Watchlists
+            .AsNoTracking()
+            .Include(w => w.Items)
+            .OrderBy(w => w.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var items = watchlists.Select(w => new WatchlistType
+        {
+            Id = w.Id.ToString(),
+            Name = w.Name,
+            Items = w.Items.Select(i => new WatchlistItemType
+            {
+                Id = i.Id.ToString(),
+                Name = i.Name,
+                Description = i.Description,
+                Ticker = i.Ticker
+            }).ToList()
+        }).ToList();
+
+        return new PagedResult<WatchlistType>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
+    }
+
+    public async Task<WatchlistType> CreateWatchlist(CreateWatchlistDto? dto = null,
+        CancellationToken cancellationToken = default)
     {
         var name = string.IsNullOrWhiteSpace(dto?.Name) ? "Watchlist " + Guid.NewGuid() : dto.Name;
         var watchlist = new Watchlist
@@ -51,7 +90,8 @@ public class SqlWatchlistRepository(MarketWizardContext context) : IWatchlistRep
         };
     }
 
-    public async Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto, CancellationToken cancellationToken = default)
+    public async Task<WatchlistType?> UpdateWatchlist(string id, UpdateWatchlistDto dto,
+        CancellationToken cancellationToken = default)
     {
         if (!Guid.TryParse(id, out var guid))
         {
@@ -147,7 +187,9 @@ public class SqlWatchlistRepository(MarketWizardContext context) : IWatchlistRep
         var isItemId = Guid.TryParse(rawItemOrTicker, out var itemId);
 
         var item = await context.WatchlistItems
-            .FirstOrDefaultAsync(i => i.WatchlistId == watchlistId && (i.Ticker == rawItemOrTicker || (isItemId && i.Id == itemId)), cancellationToken);
+            .FirstOrDefaultAsync(
+                i => i.WatchlistId == watchlistId && (i.Ticker == rawItemOrTicker || (isItemId && i.Id == itemId)),
+                cancellationToken);
 
         if (item is null)
         {

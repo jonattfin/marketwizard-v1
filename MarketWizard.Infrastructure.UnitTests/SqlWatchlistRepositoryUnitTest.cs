@@ -73,6 +73,66 @@ public class SqlWatchlistRepositoryUnitTest
     }
 
     [Fact]
+    public async Task GetPaged_ReturnsCorrectPageAndMetadata()
+    {
+        var dbName = Guid.NewGuid().ToString();
+        await using var context = CreateContext(dbName);
+
+        for (var i = 1; i <= 7; i++)
+        {
+            context.Watchlists.Add(new Watchlist
+            {
+                Id = Guid.NewGuid(),
+                Name = $"Watchlist {i:D2}",
+                Items = []
+            });
+        }
+
+        await context.SaveChangesAsync();
+
+        var repo = new SqlWatchlistRepository(context);
+
+        // Page 1 with pageSize 3
+        var page1 = await repo.GetPaged(1, 3);
+        Assert.Equal(3, page1.Items.Count);
+        Assert.Equal(1, page1.PageNumber);
+        Assert.Equal(3, page1.PageSize);
+        Assert.Equal(7, page1.TotalCount);
+        Assert.Equal(3, page1.TotalPages);
+        Assert.False(page1.HasPreviousPage);
+        Assert.True(page1.HasNextPage);
+        Assert.Equal("Watchlist 01", page1.Items[0].Name);
+
+        // Page 3 with pageSize 3
+        var page3 = await repo.GetPaged(3, 3);
+        Assert.Single(page3.Items);
+        Assert.Equal(3, page3.PageNumber);
+        Assert.Equal(3, page3.PageSize);
+        Assert.Equal(7, page3.TotalCount);
+        Assert.Equal(3, page3.TotalPages);
+        Assert.True(page3.HasPreviousPage);
+        Assert.False(page3.HasNextPage);
+        Assert.Equal("Watchlist 07", page3.Items[0].Name);
+    }
+
+    [Fact]
+    public async Task GetPaged_WhenEmpty_ReturnsEmptyPagedResult()
+    {
+        var dbName = Guid.NewGuid().ToString();
+        await using var context = CreateContext(dbName);
+        var repo = new SqlWatchlistRepository(context);
+
+        var result = await repo.GetPaged(1, 10);
+
+        Assert.NotNull(result);
+        Assert.Empty(result.Items);
+        Assert.Equal(0, result.TotalCount);
+        Assert.Equal(0, result.TotalPages);
+        Assert.False(result.HasPreviousPage);
+        Assert.False(result.HasNextPage);
+    }
+
+    [Fact]
     public async Task CreateWatchlist_AddsNewWatchlistToDatabase()
     {
         var dbName = Guid.NewGuid().ToString();
@@ -140,7 +200,8 @@ public class SqlWatchlistRepositoryUnitTest
         var invalidGuidResult = await repo.UpdateWatchlist("not-a-guid", new UpdateWatchlistDto("Updated Name"));
         Assert.Null(invalidGuidResult);
 
-        var notFoundResult = await repo.UpdateWatchlist(Guid.NewGuid().ToString(), new UpdateWatchlistDto("Updated Name"));
+        var notFoundResult =
+            await repo.UpdateWatchlist(Guid.NewGuid().ToString(), new UpdateWatchlistDto("Updated Name"));
         Assert.Null(notFoundResult);
     }
 
