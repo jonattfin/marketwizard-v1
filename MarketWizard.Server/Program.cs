@@ -2,6 +2,7 @@ using Infrastructure;
 using Infrastructure.Persistence;
 using MarketWizard.Application;
 using MarketWizard.Server;
+using MarketWizard.Server.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
+app.UseValidationExceptionHandler();
+app.UseRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
