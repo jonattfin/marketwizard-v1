@@ -15,8 +15,10 @@ function Index() {
 
   const query = useQuery<WatchListPageType>({
     queryKey: [`watchlist`, pageNumber, pageSize],
-    queryFn: async () => {
-      const response = await fetch(`/api/watchlist?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    queryFn: async ({ signal }) => {
+      const response = await fetch(`/api/watchlist?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+        signal,
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch watchlists");
       }
@@ -25,10 +27,13 @@ function Index() {
   });
 
   const useCreateWatchlist = useMutation({
-    mutationFn: async ({name}: {name: string}) => {
+    mutationFn: async ({name, idempotencyKey}: {name: string; idempotencyKey: string}) => {
       const response = await fetch(`/api/watchlist`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "X-Idempotency-Key": idempotencyKey,
+        },
         body: JSON.stringify({name}),
       });
 
@@ -46,11 +51,16 @@ function Index() {
     },
   });
 
+  const isCreating = useCreateWatchlist.isPending;
+
   const useUpdateWatchlist = useMutation({
-    mutationFn: async ({id, name}: {id: string, name: string}) => {
+    mutationFn: async ({id, name, idempotencyKey}: {id: string; name: string; idempotencyKey: string}) => {
       const response = await fetch(`/api/watchlist/${id}`, {
         method: "PUT",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "X-Idempotency-Key": idempotencyKey,
+        },
         body: JSON.stringify({name}),
       });
       
@@ -69,10 +79,13 @@ function Index() {
   });
 
   const useDeleteWatchlist = useMutation({
-    mutationFn: async ({id}: { id: string }) => {
+    mutationFn: async ({id, idempotencyKey}: { id: string; idempotencyKey: string }) => {
       const response = await fetch(`/api/watchlist/${id}`, {
         method: "DELETE",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "X-Idempotency-Key": idempotencyKey,
+        },
       });
       
       if (!response.ok) {
@@ -88,8 +101,13 @@ function Index() {
   });
 
   const handleCreate = async (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed || useCreateWatchlist.isPending) return;
+
+    const idempotencyKey = crypto.randomUUID();
     await useCreateWatchlist.mutateAsync({
-      name,
+      name: trimmed,
+      idempotencyKey,
     });
     setPageNumber(1);
     await queryClient.invalidateQueries({queryKey: ["watchlist"]});
@@ -101,9 +119,14 @@ function Index() {
   };
 
   const handleUpdate = async (id: string, watchlistName: string) => {
+    const trimmed = watchlistName.trim();
+    if (!trimmed || useUpdateWatchlist.isPending) return;
+
+    const idempotencyKey = crypto.randomUUID();
     await useUpdateWatchlist.mutateAsync({
       id,
-      name: watchlistName,
+      name: trimmed,
+      idempotencyKey,
     });
     await queryClient.invalidateQueries({queryKey: ["watchlist"]});
 
@@ -114,8 +137,12 @@ function Index() {
   };
 
   const handleDelete = async (id: string) => {
+    if (useDeleteWatchlist.isPending) return;
+
+    const idempotencyKey = crypto.randomUUID();
     await useDeleteWatchlist.mutateAsync({
       id,
+      idempotencyKey,
     });
     if ((query.data?.items?.length ?? 0) <= 1 && pageNumber > 1) {
       setPageNumber((prev) => prev - 1);
@@ -167,9 +194,10 @@ function Index() {
                     placeholder="Watchlist name"
                     size="sm"
                     value={newWatchlistName}
+                    disabled={isCreating}
                     onChange={(e) => setNewWatchlistName(e.target.value)}
                     onKeyDown={async (e) => {
-                      if (e.key === "Enter") {
+                      if (e.key === "Enter" && newWatchlistName.trim() && !isCreating) {
                         await handleCreate(newWatchlistName);
                         setNewWatchlistName("");
                         setOpen(false);
@@ -180,7 +208,10 @@ function Index() {
                     mt="4"
                     size="sm"
                     variant="outline"
+                    loading={isCreating}
+                    disabled={isCreating || !newWatchlistName.trim()}
                     onClick={async () => {
+                      if (!newWatchlistName.trim() || isCreating) return;
                       await handleCreate(newWatchlistName);
                       setNewWatchlistName("");
                       setOpen(false);
