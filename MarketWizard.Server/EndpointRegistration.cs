@@ -2,6 +2,7 @@ using MarketWizard.Application.Features.Misc.Queries;
 using MarketWizard.Application.Features.Watchlists.Commands;
 using MarketWizard.Application.Features.Watchlists.Queries;
 using MarketWizard.Domain.Entities;
+using MarketWizard.Server.Filters;
 using MediatR;
 
 namespace MarketWizard.Server;
@@ -44,18 +45,26 @@ public static class EndpointRegistration
         {
             var created = await sender.Send(new CreateWatchlistCommand(dto), cancellationToken);
             return Results.Created($"/api/watchlist/{created.Id}", created);
-        }).WithName("CreateWatchlist");
+        })
+        .AddEndpointFilter<IdempotencyFilter>()
+        .WithName("CreateWatchlist");
+
         api.MapPut("watchlist/{id}",
             async (string id, UpdateWatchlistDto dto, ISender sender, CancellationToken cancellationToken) =>
             {
                 var updated = await sender.Send(new UpdateWatchlistCommand(id, dto), cancellationToken);
                 return updated is not null ? Results.Ok(updated) : Results.NotFound();
-            }).WithName("UpdateWatchlist");
+            })
+            .AddEndpointFilter<IdempotencyFilter>()
+            .WithName("UpdateWatchlist");
+
         api.MapDelete("watchlist/{id}", async (string id, ISender sender, CancellationToken cancellationToken) =>
         {
             await sender.Send(new DeleteWatchlistCommand(id), cancellationToken);
             return Results.NoContent();
-        }).WithName("DeleteWatchlist");
+        })
+        .AddEndpointFilter<IdempotencyFilter>()
+        .WithName("DeleteWatchlist");
 
         // api.MapPost("watchlist-item", async (WatchlistItemDto dto, ISender sender, CancellationToken cancellationToken) =>
         // {
